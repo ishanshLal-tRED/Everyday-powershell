@@ -6,7 +6,7 @@ $kind = $args[0] # 1st argument
 #Right click -> Copy as path, paste it below,
 #Run the script
 if($kind -eq $null){
-    Write-Host "[Usage]"
+    Write-Host "[Usage, update vscodium_loc before running]"
     Write-Host "  add    - Adds VSCodium Options to context menu"
     Write-Host "  remove - Removes VSCodium Options from context menu"
     $kind = Read-Host
