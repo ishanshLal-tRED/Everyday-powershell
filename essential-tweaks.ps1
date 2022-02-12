@@ -6,8 +6,8 @@
 #   <Script_path>
 #   Set-ExecutionPolicy -ExecutionPolicy Default
 
-Write-Output "Elevating privileges for this process"
-do {} until (Elevate-Privileges SeTakeOwnershipPrivilege)
+#Requires -RunAsAdministrator
+Import-Module -Name Appx -UseWindowsPowershell
 
 Write-Output "Uninstalling default apps"
 $apps = @(
@@ -171,6 +171,22 @@ $cdm = @(
     "SystemPaneSuggestionsEnabled"
 )
 
+function New-FolderForced {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param (
+		[Parameter(Position = 0, Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+		[string]
+        $Path
+    )
+
+    process {
+        if (-not (Test-Path $Path)) {
+            Write-Verbose "-- Creating full path to:  $Path"
+            New-Item -Path $Path -ItemType Directory -Force
+        }
+    }
+}
+
 New-FolderForced -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
 foreach ($key in $cdm) {
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" $key 0
@@ -204,3 +220,6 @@ Get-AppxPackage -Name *edge* | Where-Object {!$_.NonRemovable} | ForEach-Object 
 	}
 }
 REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\EdgeUpdate" /f /v DoNotUpdateToEdgeWithChromium /t REG_DWORD /d 1
+
+# Bing search in windows search
+REG ADD "HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Explorer" /f /v DisableSearchBoxSuggestions /t REG_DWORD /d 1

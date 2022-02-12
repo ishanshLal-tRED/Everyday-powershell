@@ -35,7 +35,7 @@ if ($kind -eq "add"){
         REG ADD "HKEY_CURRENT_USER\Software\Classes\*\shell\Open with VSCodium" /f /d "Edit with VSCodium"
         REG ADD "HKEY_CURRENT_USER\Software\Classes\*\shell\Open with VSCodium" /f /v Icon /d "$vscodium_loc,0"
         
-        REG ADD "HKEY_CURRENT_USER\Software\Classes\*\shell\Open with VSCodium\cmd" /f /d "$vscodium_loc \`"%1\`""
+        REG ADD "HKEY_CURRENT_USER\Software\Classes\*\shell\Open with VSCodium\command" /f /d "$vscodium_loc \`"%1\`""
     }
     $option = "Add <Open Folder as VS Code Project> for Open-folder context"
     $confirmation = ConfirmChange($option)
@@ -43,7 +43,7 @@ if ($kind -eq "add"){
         REG ADD "HKEY_CURRENT_USER\Software\Classes\Directory\shell\vscodium" /f /d "Open Folder in VSCodium"
         REG ADD "HKEY_CURRENT_USER\Software\Classes\Directory\shell\vscodium" /f /v Icon /d "$vscodium_loc,0"
 
-        REG ADD "HKEY_CURRENT_USER\Software\Classes\Directory\shell\vscodium\cmd" /f /d "$vscodium_loc \`"%1\`""
+        REG ADD "HKEY_CURRENT_USER\Software\Classes\Directory\shell\vscodium\command" /f /d "$vscodium_loc \`"%1\`""
     }
     $option = "Add <Open Folder as VS Code Project> for Open-Directory context"
     $confirmation = ConfirmChange($option)
@@ -51,7 +51,7 @@ if ($kind -eq "add"){
         REG ADD "HKEY_CURRENT_USER\Software\Classes\Directory\Background\shell\vscodium" /f /d "Open Directory in VSCodium" #default
         REG ADD "HKEY_CURRENT_USER\Software\Classes\Directory\Background\shell\vscodium" /f /v Icon /d "$vscodium_loc,0"
         
-        REG ADD "HKEY_CURRENT_USER\Software\Classes\Directory\Background\shell\vscodium\cmd" /f /d "$vscodium_loc \`"%V\`""
+        REG ADD "HKEY_CURRENT_USER\Software\Classes\Directory\Background\shell\vscodium\command" /f /d "$vscodium_loc \`"%V\`""
     }
 }elseif ($kind -eq "remove"){
     REG DELETE "HKEY_CURRENT_USER\Software\Classes\*\shell\Open with VSCodium" /f
