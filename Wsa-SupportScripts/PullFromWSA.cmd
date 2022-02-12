@@ -9,11 +9,22 @@
 ECHO %%"[TIP:]    If you see error connecting to PORT, then click WSA->Developer_mode(Should be on)->Manage_developer_setting"
 ECHO %%           sometimes eventhough developer mode is enabled, but ports are not connected, so this wakes it up
 ECHO %%"[TIP:]    If you see error device offline, then in Manage_developer_setting->USB_debugging(on)"
-ECHO %%"[#Usage:] Create this file's shortcut, cut it, Open Run (Windows + R), Type \'shell:sendto\', Hit enter, paste that Shortcut Here"
-ECHO %%"[TIP:]    You can (rename/change icon of) the shortcut however you want"
-ECHO %%"[#Usage:] Now select files you want to send, Right click, Send to -> <Shortcut name>, Easy peasy"
+ECHO %%"[#Usage:] Add this file path to Current User Path Environment Variable, (or you can go fancy as you like)"
+ECHO %%"[#Usage:] PullFromWSA.cmd <WSA/Folder/Location/Relative/To/storage/emulated/0; default: Download> <custom/pull/location, default: Directory/Structure/As/In/WSA>"
+ECHO %%"[#Usage:] Ex. : In (Explorer.AddressBar / cmd)  PullFromWSA.cmd ./Download ./WSA-Download"
 ECHO ===============
 
+if "%~1"=="" (
+	@SET "PULL_FROM_LOCATION=./storage/emulated/0/Download"
+	@SET "PULL_TO_LOCATION=%cd%/Download"
+) else (
+	@SET "PULL_FROM_LOCATION=./storage/emulated/0/%1"
+	if "%~2"=="" (
+		@SET "PULL_TO_LOCATION=%cd%/%1/.."
+	) else (
+		@SET "PULL_TO_LOCATION=%2/.."
+	)
+)
 if not exist "%ADB_LOC%adb.exe" (
 	ECHO "cannot find ADB in | %ADB_LOC% | please check if it exists"
 	TIMEOUT 5
@@ -23,23 +34,17 @@ if not exist "%ADB_LOC%adb.exe" (
 pushd %ADB_LOC%
 
 	adb connect %PORT%
-
-::Calculate number of parameters
-	@SET num_of_params=0
-	@SET MAX_ALLOWED=26
-
-	for %%I IN (%*) DO set /A "num_of_params+=1"
-	ECHO Num of files passed = %num_of_params%, Max allowed = %MAX_ALLOWED%
-
-	if %num_of_params% GTR %MAX_ALLOWED% (
-		ECHO Maximum of 26 files are allowed, Please reduce the nuber of selections
-		TIMEOUT 5
-		EXIT /B
+	if not exist "%PULL_TO_LOCATION%" (
+		mkdir "%PULL_TO_LOCATION%"
 	)
+	
+	:: fix error of duplicate dirs
+	pushd "%PULL_TO_LOCATION%"
+	@SET "PULL_TO_LOCATION=%CD%"
+	rm -r *
+	popd
 
-	for %%I IN (%*) DO (
-		adb -s %PORT% push %%I ./storage/emulated/0/Download
-	)
+	adb -s %PORT% pull "%PULL_FROM_LOCATION%" "%PULL_TO_LOCATION%"
 
 POPD
 TIMEOUT 5
