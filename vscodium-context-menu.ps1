@@ -21,7 +21,8 @@ function ConfirmChange($param_str){
     Switch ($KeyPress.key) {
         Y { return $true }
         default {
-            Write-Host "Invalid Option selected, using default option" # fallthrough
+            Write-Host "Invalid Option selected, using default option" 
+            # fallthrough
         }
         N { return $false } 
     }
