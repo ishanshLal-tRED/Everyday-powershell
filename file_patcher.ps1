@@ -45,10 +45,11 @@ function PatchFunction { param([String]$file, [Object[]]$patch_info) # don't kno
         Write-Host "by replacing `'$rplc`' with `'$rplm`'"
         Write-Host "Status:" -BackgroundColor Blue -NoNewline
 
-        $found_posn = $content[$line - 1].IndexOf("$rplc")
+        $line-- # in powershell, lines start from 0
+        $found_posn = $content[$line].IndexOf("$rplc")
         if ($found_posn -ge 0) {
             Write-Host "Patching" -ForegroundColor Blue
-            $content[$line - 1] = $content[$line - 1] -Replace "$rplc", "$rplm"
+            $content[$line] = $content[$line] -Replace "$rplc", "$rplm"
             try {
                 Set-Content "$file" $content
                 return $true
@@ -57,7 +58,7 @@ function PatchFunction { param([String]$file, [Object[]]$patch_info) # don't kno
                 return $false
             }
         } else {
-            $found_posn = $content[$line - 1].IndexOf("$rplm")
+            $found_posn = $content[$line].IndexOf("$rplm")
             if($found_posn -ge 0){
                 Write-Host "Already Patched" -ForegroundColor Green
                 return $true

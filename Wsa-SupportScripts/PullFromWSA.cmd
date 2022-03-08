@@ -31,7 +31,7 @@ if not exist "%ADB_LOC%adb.exe" (
 	EXIT /B
 )
 
-pushd %ADB_LOC%
+PUSHD %ADB_LOC%
 
 	adb connect %PORT%
 	if not exist "%PULL_TO_LOCATION%" (
@@ -39,10 +39,10 @@ pushd %ADB_LOC%
 	)
 	
 	:: fix error of duplicate dirs
-	pushd "%PULL_TO_LOCATION%"
+	PUSHD "%PULL_TO_LOCATION%"
 	@SET "PULL_TO_LOCATION=%CD%"
 	rm -r *
-	popd
+	POPD
 
 	adb -s %PORT% pull "%PULL_FROM_LOCATION%" "%PULL_TO_LOCATION%"
 
