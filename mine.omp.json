@@ -49,7 +49,7 @@
               "wsl_separator": " on "
             },
             "style": "diamond",
-            "trailing_diamond": "<transparent,>\ue0b2</>",
+            "trailing_diamond": "<transparent>\ue0b2</>",
             "type": "os"
           },
           {

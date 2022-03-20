@@ -192,6 +192,9 @@ foreach ($key in $cdm) {
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" $key 0
 }
 
+# Win32LongPathLimit
+New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name LongPathsEnabled -PropertyType DWord -Value 1 -Force
+
 New-FolderForced -Path "HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore"
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore" "AutoDownload" 2
 
@@ -223,3 +226,33 @@ REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\EdgeUpdate" /f /v DoNotUpdateToEd
 
 # Bing search in windows search
 REG ADD "HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Explorer" /f /v DisableSearchBoxSuggestions /t REG_DWORD /d 1
+
+if (Get-AppxPackage -Name Microsoft.WindowsTerminal)
+{
+	# Show the option in the Desktop context menu
+	if (-not (Test-Path -Path Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\runas\command))
+	{
+		New-Item -Path Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\runas\command -ItemType Directory -Force
+	}
+	New-ItemProperty -Path Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\runas -Name "(default)" -PropertyType String -Value $Localization.OpenInWindowsTerminalAdmin -Force
+	New-ItemProperty -Path Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\runas -Name Icon -PropertyType String -Value "imageres.dll,73" -Force
+	New-ItemProperty -Path Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\runas -Name NoWorkingDirectory -PropertyType String -Value "" -Force
+	New-ItemProperty -Path Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\runas\command -Name "(default)" -PropertyType String -Value "wt.exe -d ""%V""" -Force
+    
+	# Show the option in the folders context menu
+	if (-not (Test-Path -Path Registry::HKEY_CLASSES_ROOT\Directory\shell\runas\command))
+	{
+		New-Item -Path Registry::HKEY_CLASSES_ROOT\Directory\shell\runas\command -ItemType Directory -Force
+	}
+	New-ItemProperty -Path Registry::HKEY_CLASSES_ROOT\Directory\shell\runas -Name "(default)" -PropertyType String -Value $Localization.OpenInWindowsTerminalAdmin -Force
+	New-ItemProperty -Path Registry::HKEY_CLASSES_ROOT\Directory\shell\runas -Name Icon -PropertyType String -Value "imageres.dll,73" -Force
+	New-ItemProperty -Path Registry::HKEY_CLASSES_ROOT\Directory\shell\runas -Name NoWorkingDirectory -PropertyType String -Value "" -Force
+	New-ItemProperty -Path Registry::HKEY_CLASSES_ROOT\Directory\shell\runas\command -Name "(default)" -PropertyType String -Value "wt.exe -d ""%1""" -Force
+} else { # to Remove
+	$Items = @(
+		"Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\runas",
+		"Registry::HKEY_CLASSES_ROOT\Directory\shell\runas"
+	)
+	Remove-Item -Path $Items -Recurse -Force -ErrorAction Ignore
+}
+	
