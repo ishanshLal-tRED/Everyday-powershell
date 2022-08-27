@@ -30,13 +30,13 @@ $apps = @(
     "Microsoft.MicrosoftStickyNotes"
     #"Microsoft.MinecraftUWP"
     "Microsoft.NetworkSpeedTest"
-    "Microsoft.Office.OneNote"
+    #"Microsoft.Office.OneNote"
     "Microsoft.People"
     "Microsoft.Print3D"
     "Microsoft.SkypeApp"
     "Microsoft.Wallet"
     #"Microsoft.Windows.Photos"
-    "Microsoft.WindowsAlarms"
+    #"Microsoft.WindowsAlarms"
     #"Microsoft.WindowsCalculator"
     #"Microsoft.WindowsCamera"
     "microsoft.windowscommunicationsapps"
@@ -234,7 +234,7 @@ if (Get-AppxPackage -Name Microsoft.WindowsTerminal)
 	{
 		New-Item -Path Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\runas\command -ItemType Directory -Force
 	}
-	New-ItemProperty -Path Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\runas -Name "(default)" -PropertyType String -Value $Localization.OpenInWindowsTerminalAdmin -Force
+	New-ItemProperty -Path Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\runas -Name "(default)" -PropertyType String -Value "Open in Windows Terminal As Admin" -Force
 	New-ItemProperty -Path Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\runas -Name Icon -PropertyType String -Value "imageres.dll,73" -Force
 	New-ItemProperty -Path Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\runas -Name NoWorkingDirectory -PropertyType String -Value "" -Force
 	New-ItemProperty -Path Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\runas\command -Name "(default)" -PropertyType String -Value "wt.exe -d ""%V""" -Force
@@ -244,11 +244,11 @@ if (Get-AppxPackage -Name Microsoft.WindowsTerminal)
 	{
 		New-Item -Path Registry::HKEY_CLASSES_ROOT\Directory\shell\runas\command -ItemType Directory -Force
 	}
-	New-ItemProperty -Path Registry::HKEY_CLASSES_ROOT\Directory\shell\runas -Name "(default)" -PropertyType String -Value $Localization.OpenInWindowsTerminalAdmin -Force
+	New-ItemProperty -Path Registry::HKEY_CLASSES_ROOT\Directory\shell\runas -Name "(default)" -PropertyType String -Value "Open in Windows Terminal As Admin" -Force
 	New-ItemProperty -Path Registry::HKEY_CLASSES_ROOT\Directory\shell\runas -Name Icon -PropertyType String -Value "imageres.dll,73" -Force
 	New-ItemProperty -Path Registry::HKEY_CLASSES_ROOT\Directory\shell\runas -Name NoWorkingDirectory -PropertyType String -Value "" -Force
 	New-ItemProperty -Path Registry::HKEY_CLASSES_ROOT\Directory\shell\runas\command -Name "(default)" -PropertyType String -Value "wt.exe -d ""%1""" -Force
-} else { # to Remove
+} else {
 	$Items = @(
 		"Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\runas",
 		"Registry::HKEY_CLASSES_ROOT\Directory\shell\runas"

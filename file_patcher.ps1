@@ -37,34 +37,36 @@ function PatchFunction { param([String]$file, [Object[]]$patch_info) # don't kno
     Write-Host "file: $file"
     $content = Get-Content "$file"
     $patch_info | ForEach-Object {
-        $line = $_.line
+        $from = $_.line.from - 1 # in pwsh, LINEs start from 0
+        $till = $_.line.till - 1 # LINEs end at TOTAL_LINES - 1
         $rplc = $_.replace
         $rplm = $_.replacement
         "------------"
         Write-Host "At line: $line"
         Write-Host "by replacing `'$rplc`' with `'$rplm`'"
         Write-Host "Status:" -BackgroundColor Blue -NoNewline
-
-        $line-- # in powershell, lines start from 0
-        $found_posn = $content[$line].IndexOf("$rplc")
-        if ($found_posn -ge 0) {
-            Write-Host "Patching" -ForegroundColor Blue
-            $content[$line] = $content[$line] -Replace "$rplc", "$rplm"
-            try {
-                Set-Content "$file" $content
-                return $true
-            } catch {
-                Write-Host "Unable to save patch to file $file"
-                return $false
-            }
-        } else {
-            $found_posn = $content[$line].IndexOf("$rplm")
-            if($found_posn -ge 0){
-                Write-Host "Already Patched" -ForegroundColor Green
-                return $true
-            }else{
-                Write-Host "Cannot be patched, recheck your JSON file" -ForegroundColor Red
-                return $false
+        
+        $line = $from..$till | ForEach {
+            $found_posn = $content[$line].IndexOf("$rplc")
+            if ($found_posn -ge 0) {
+                Write-Host "Patching" -ForegroundColor Blue
+                $content[$line] = $content[$line] -Replace "$rplc", "$rplm"
+                try {
+                    Set-Content "$file" $content
+                    return $true
+                } catch {
+                    Write-Host "Unable to save patch to file $file"
+                    return $false
+                }
+            } else {
+                $found_posn = $content[$line].IndexOf("$rplm")
+                if($found_posn -ge 0){
+                    Write-Host "Already Patched" -ForegroundColor Green
+                    return $true
+                }else{
+                    Write-Host "Cannot be patched, recheck your JSON file" -ForegroundColor Red
+                    return $false
+                }
             }
         }
     }

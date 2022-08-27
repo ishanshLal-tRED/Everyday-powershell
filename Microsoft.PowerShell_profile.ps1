@@ -7,9 +7,12 @@ if ($host.Name -eq 'ConsoleHost')
 }
 
 Import-Module -Name Terminal-Icons
-set-alias desktop ""
 
-oh-my-posh --init --shell pwsh --config https://raw.githubusercontent.com/ishanshLal-tRED/Everyday-powershell/main/mine.omp.json | Invoke-Expression
+$oh_my_gosh_theme_path = "$env:temp/pwsh.omp.json"
+if(-not (Test-Path -Path "$oh_my_gosh_theme_path" -PathType Leaf)){ 
+    Invoke-WebRequest "https://raw.githubusercontent.com/ishanshLal-tRED/Everyday-powershell/main/mine.omp.json" -OutFile "$oh_my_gosh_theme_path"
+}
+oh-my-posh --init --shell pwsh --config "$oh_my_gosh_theme_path" | Invoke-Expression
 
 Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
@@ -30,8 +33,6 @@ Register-ArgumentCompleter -Native -CommandName dotnet -ScriptBlock {
  }
 
 # ---
-
-
 # This is an example profile for PSReadLine.
 #
 # This is roughly what I use so there is some emphasis on emacs bindings,
