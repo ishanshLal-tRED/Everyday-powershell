@@ -258,12 +258,8 @@ blocks:
         template: ╰─
       - type: text
         style: plain
-        foreground: white
-        foreground_templates:
-          - "{{ if and .Segments.Path.Writable (not .Root) }}{{ else }}red{{ end }}"
-        properties:
-          root_icon: 
-        template: "{{ if and .Root ( not .Segments.Path.Writable ) }} {{ end }}{{ if and .Root .Segments.Path.Writable }}  {{ end }} \b"
+        foreground: red
+        template: "{{ if .Root }} {{ end }}{{ if not .Segments.Path.Writable }} {{ end }} \b"
       - type: text
         style: plain
         foreground: cyan
